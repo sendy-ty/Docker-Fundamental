@@ -1,7 +1,7 @@
 # Docker Course Documentation
 
 ## Deskripsi Repository
-Repository ini berisi dokumentasi lengkap hasil pembelajaran Docker yang mencakup konsep dasar, praktik penggunaan Docker, hingga challenge lanjutan. Seluruh dokumentasi disusun berdasarkan lab praktikum dan challenge pada Docker Course (Adinusa / BT Academy).
+Repository ini berisi dokumentasi lengkap hasil pembelajaran Docker yang mencakup konsep dasar, praktik penggunaan Docker, hingga challenge lanjutan. Seluruh dokumentasi disusun berdasarkan lab dan challenge pada Docker Course (Adinusa).
 
 Dokumentasi ditujukan sebagai:
 - Referensi praktikum Docker
@@ -106,8 +106,3 @@ Setelah menyelesaikan seluruh lab dan challenge, pengguna diharapkan mampu:
 ## Author
 Sandy Tirta Yudha  
 Docker Course Participant
-
----
-
-## Catatan
-Dokumentasi ini bersifat edukatif dan mengikuti kebutuhan praktikum Docker Course.
