@@ -1,0 +1,85 @@
+Lab 8.1 – Configuring Logging Driver
+
+## Deskripsi Task
+Melakukan konfigurasi logging driver Docker menggunakan
+json-file melalui file daemon.json dengan pengaturan
+log rotation, kemudian memverifikasi bahwa log container
+berhasil dibuat dan tersimpan pada direktori Docker host.
+
+## Langkah Implementasi
+
+1. Membuat File Konfigurasi daemon.json
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ sudo vim /etc/docker/daemon.json
+
+- Isi konfigurasi:
+  {
+    "log-driver": "json-file",
+    "log-opts": {
+      "max-size": "10m",
+      "max-file": "100"
+    }
+  }
+
+- Hasil:
+  File daemon.json berhasil dibuat untuk mengatur
+  logging driver Docker dengan log rotation.
+
+------------------------------------------------------------
+2. Restart Docker Daemon
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ sudo systemctl daemon-reload
+  $ sudo systemctl restart docker
+
+- Hasil:
+  Docker daemon berhasil direstart dan konfigurasi
+  logging driver diterapkan untuk container baru.
+
+------------------------------------------------------------
+3. Menjalankan Container untuk Pengujian Logging
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker run --name alpine --log-driver json-file \
+    --log-opt max-size=10m \
+    registry.adinusa.id/btacademy/alpine echo hello world
+
+- Hasil:
+  Container alpine berhasil dijalankan dan menghasilkan
+  output log "hello world".
+
+------------------------------------------------------------
+4. Mengecek File Log Container di Direktori Docker
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ sudo cat /var/lib/docker/containers/$(docker ps --no-trunc -a | grep 'alpine' | awk '{print $1}')/$(docker ps --no-trunc -a | grep 'alpine' | awk '{print $1}')-json.log | jq .
+
+  OR
+
+  $ sudo cat /var/lib/docker/containers/CONTAINER_ID/CONTAINER_ID-json.log
+
+- Hasil:
+  Log container berhasil ditampilkan dalam format JSON
+  dan tersimpan pada direktori /var/lib/docker/containers.
+
+------------------------------------------------------------
+## Hasil Verifikasi
+- Logging driver Docker menggunakan json-file [✓]
+- File daemon.json terkonfigurasi dengan benar [✓]
+- Container alpine menghasilkan log [✓]
+- File log tersimpan pada direktori Docker host [✓]
+- Grading do-008-1 berhasil (Score 100) [✓]
+
+## Kesimpulan
+Konfigurasi logging driver Docker menggunakan json-file
+berhasil diterapkan dengan pengaturan log rotation.
+Log container tersimpan dalam format JSON pada direktori
+Docker host dan dapat digunakan untuk kebutuhan monitoring
+serta troubleshooting sistem.
+
+Environment: pod-sandy-node01
