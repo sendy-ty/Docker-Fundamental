@@ -82,7 +82,7 @@ Setelah menyelesaikan seluruh lab dan challenge, pengguna diharapkan mampu:
 
 ---
 
-## Tools dan Teknologi
+## Tools
 - Docker Engine
 - Docker Compose
 - Docker Swarm
