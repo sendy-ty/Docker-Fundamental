@@ -1,0 +1,41 @@
+KONFIGURASI LAB 7.2 – DEPLOY SERVICE TO SWARM
+--------------------------------------------
+
+1. Membuat service Nginx dengan 2 replica dan port 80, Menjalankan web server Nginx sebagai service Swarm dengan dua container dan akses melalui port 80.
+
+   $ docker service create --name web --replicas 2 -p 80:80 \
+   $ registry.adinusa.id/btacademy/nginx:latest
+
+2. Mengecek status service
+
+   $ docker service ls
+
+3. Menguji akses service dari setiap node Memastikan routing mesh Docker Swarm berfungsi dan service dapat diakses dari node mana pun.
+
+   $ curl http://10.XX.XX.10 (sesuaikan IP setiap node)
+   $ curl http://10.XX.XX.20 (sesuaikan IP setiap node)	
+
+4. Melihat detail konfigurasi service Menampilkan informasi image, port, mode service, dan jumlah replica.
+
+   $ docker service inspect --pretty web
+
+5. Melihat lokasi service berjalan Mengetahui di node mana masing-masing replica service dijalankan.
+
+   $ docker service ps web
+
+6. Membuat service dengan batasan CPU dan memory Menjalankan service dengan kontrol resource agar tidak melebihi batas yang ditentukan.
+
+$ docker service create --name [username] --reserve-cpu 1 --limit-cpu 1 \
+--reserve-memory  256mb --limit-memory 128mb registry.adinusa.id/btacademy/httpd:latest
+
+7. Mengecek spesifikasi service
+   Memastikan batas CPU dan memory telah diterapkan.
+
+   $ docker service inspect --pretty sandy
+
+--------------------------------------------
+HASIL AKHIR
+- Service web berjalan dengan 2 replica
+- Service dapat diakses dari seluruh node
+- Service sandy berjalan dengan limit CPU dan memory
+--------------------------------------------

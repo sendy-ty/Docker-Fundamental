@@ -1,0 +1,88 @@
+Lab 7.5 – Deploy Container via Portainer Dashboard
+
+## Deskripsi Task
+Melakukan deployment container menggunakan Portainer
+Dashboard pada node worker (node02), serta melakukan
+verifikasi container melalui menu Containers dan akses
+web service yang dijalankan.
+
+## Langkah Implementasi
+
+1. Akses Portainer Dashboard
+------------------------------------------------------------
+- URL:
+  http://10.10.10.11:9000
+
+- Hasil:
+  Portainer Dashboard berhasil diakses dan siap digunakan.
+
+------------------------------------------------------------
+2. Menjalankan Container melalui Portainer
+------------------------------------------------------------
+- Menu:
+  Home -> pod-sandy-node02
+
+- Langkah:
+  a. Pilih menu Containers
+  b. Klik + Add Container
+
+- Konfigurasi Container:
+  Name        : sandy-web
+  Image       : nginx:latest
+  Host Port   : 8080
+  Container   : 80
+  Node        : pod-sandy-node02
+
+- Aksi:
+  Klik Deploy the Container
+
+- Hasil:
+  Container berhasil dideploy pada node02.
+
+------------------------------------------------------------
+3. Notifikasi Deploy Container
+------------------------------------------------------------
+- Hasil:
+  Muncul notifikasi pada bagian kanan atas dashboard
+  yang menandakan container berhasil dibuat.
+  Container dapat dilihat pada menu Containers.
+
+------------------------------------------------------------
+4. Monitoring dan Manajemen Container
+------------------------------------------------------------
+- Aksi yang dapat dilakukan:
+  - Melihat Logs Container
+  - Inspect Container
+  - Melihat Stats Container
+  - Mengakses Console Container
+    (melalui Quick Actions Menu)
+
+- Hasil:
+  Container dapat dimonitor dan dikelola melalui
+  Portainer Dashboard.
+
+------------------------------------------------------------
+5. Akses Web Service Container
+------------------------------------------------------------
+- URL:
+  http://10.10.10.12:8080
+
+- Hasil:
+  Halaman default Nginx berhasil ditampilkan melalui
+  browser.
+
+------------------------------------------------------------
+## Hasil Verifikasi
+- Container sandy-web berhasil dibuat dan berjalan [✓]
+- Container muncul pada menu Containers di Portainer [✓]
+- Container berjalan pada node pod-sandy-node02 [✓]
+- Web service dapat diakses melalui port 8080 [✓]
+
+## Kesimpulan
+Portainer Dashboard memudahkan proses deployment dan
+manajemen container secara visual. Container dapat
+dijalankan langsung pada node tertentu, dimonitor,
+dan diakses melalui antarmuka web tanpa menggunakan
+perintah CLI.
+
+Environment: pod-sandy-node01 & pod-sandy-node02

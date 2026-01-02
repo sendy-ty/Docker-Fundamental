@@ -1,0 +1,33 @@
+Lab 7.1 – Create Swarm
+
+## Deskripsi Task
+Membangun Docker Swarm cluster dengan satu manager node dan satu worker node, serta memverifikasi bahwa worker node berhasil bergabung ke dalam swarm.
+
+## Langkah Implementasi
+1. Initialization Swarm (Manager Node)
+   - Node: pod-sandyyirtaa-node01
+   - Perintah:
+     $ docker swarm init --advertise-addr 10.7.7.10
+   - Hasil: Node01 berhasil diinisialisasi sebagai Swarm Manager dan menghasilkan worker join token.
+
+2. Join Worker Node ke Swarm
+   - Node: pod-sandyyirtaa-node02
+   - Perintah:
+     $ docker swarm join --token <WORKER_TOKEN> 10.7.7.10:2377
+   - Hasil: Node02 berhasil bergabung ke dalam swarm sebagai Worker Node.
+
+3. Verifikasi Node Swarm
+   - Node: pod-sandyyirtaa-node01
+   - Perintah:
+     $ docker node ls
+   - Hasil: Menampilkan daftar node yang tergabung dalam swarm.
+
+## Hasil Verifikasi
+- Swarm Manager: pod-sandyyirtaa-node01 [✓]
+- Worker Node: pod-sandyyirtaa-node02 [✓]
+- Status Node: Ready dan Active [✓]
+
+## Kesimpulan
+Docker Swarm berhasil dikonfigurasi dengan satu manager node dan satu worker node. Kedua node tergabung dalam satu cluster Swarm dan siap digunakan untuk deployment service atau stack pada tahap selanjutnya.
+
+Environment: pod-sandyyirtaa-node01 & pod-sandyyirtaa-node02

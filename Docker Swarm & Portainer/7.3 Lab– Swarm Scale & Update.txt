@@ -1,0 +1,55 @@
+Lab 7.3 – Docker Swarm Scale & Update
+
+## Deskripsi Task
+Melakukan pengelolaan service pada Docker Swarm dengan
+menerapkan perubahan jumlah replica (scaling) serta
+melakukan rolling update image service tanpa menghentikan
+layanan yang sedang berjalan.
+
+## Langkah Implementasi
+1. Create Service Nginx dengan 3 Replica
+   - Node: pod-sandy-node01
+   - Perintah:
+     $ docker service create --name web2 --replicas 3 -p 80:80 registry.adinusa.id/btacademy/nginx:latest
+   - Hasil: Service web2 berhasil dibuat dan berjalan dengan 3 replica.
+
+2. Melakukan Scaling Service
+   - Node: pod-sandy-node01
+   - Perintah:
+     $ docker service scale web2=1
+   - Hasil: Jumlah replica service web2 berhasil diubah dari 3 menjadi 1.
+
+3. Verifikasi Perubahan Replica
+   - Node: pod-sandy-node01
+   - Perintah:
+     $ docker service ls
+     $ docker service ps web2
+   - Hasil: Service web2 berjalan dengan 1 replica dan status running.
+
+4. Melakukan Rolling Update Image Service
+   - Node: pod-sandy-node01
+   - Perintah:
+     $ docker service update --image sistyo/myweb web2
+   - Hasil: Image service web2 berhasil diperbarui menggunakan image sistyo/myweb.
+
+5. Verifikasi Status Update Service
+   - Node: pod-sandy-node01
+   - Perintah:
+     $ docker service inspect --pretty web2
+   - Hasil: Status update menunjukkan "update completed" dan image service
+     telah berubah menjadi sistyo/myweb:latest.
+
+## Hasil Verifikasi
+- Replica service web2 berhasil berjalan sesuai konfigurasi (1 replica) [✓]
+- Status update image service berhasil dijalankan tanpa error [✓]
+- Image service web2 telah diperbarui menjadi sistyo/myweb:latest [✓]
+- Konten service setelah update image berhasil ditampilkan
+  (halaman PHP dapat diakses dari node01) [✓]
+
+## Kesimpulan
+Docker Swarm mampu melakukan pengelolaan service secara
+dinamis, baik dalam hal scaling jumlah replica maupun
+pembaruan image service melalui mekanisme rolling update,
+sehingga service tetap berjalan tanpa downtime.
+
+Environment: pod-sandy-node01 & pod-sandy-node02

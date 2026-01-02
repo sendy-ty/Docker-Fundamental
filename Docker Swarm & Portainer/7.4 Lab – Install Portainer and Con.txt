@@ -1,0 +1,105 @@
+Lab 7.4 – Install Portainer and Configuration
+
+## Deskripsi Task
+Melakukan instalasi Portainer sebagai web-based Docker
+management tool serta menghubungkan node worker (node02)
+ke Portainer Dashboard menggunakan Portainer Agent
+pada lingkungan Docker Swarm.
+
+## Langkah Implementasi
+
+1. Install Portainer di Node01
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker volume create portainer_data
+
+  $ docker run -d -p 8000:8000 -p 9000:9000 --name portainer --restart=always \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v portainer_data:/data \
+    portainer/portainer-ce:latest
+
+- Hasil:
+  Container Portainer berhasil dijalankan dan siap
+  diakses melalui browser.
+
+------------------------------------------------------------
+2. Akses Portainer Dashboard
+------------------------------------------------------------
+- URL:
+  http://10.10.10.11:9000
+
+- Konfigurasi awal:
+  - Membuat akun admin
+  - Memilih environment Docker (Local Docker)
+
+- Hasil:
+  Dashboard Portainer dapat diakses dan digunakan.
+
+------------------------------------------------------------
+3. Deploy Portainer Agent (Docker Swarm)
+------------------------------------------------------------
+- Node: pod-sandy-node01 (Manager)
+
+- Membuat overlay network:
+  $ docker network create \
+    --driver overlay \
+    portainer_agent_network
+
+- Menjalankan Portainer Agent sebagai service Swarm:
+  $ docker service create \
+    --name portainer_agent \
+    --network portainer_agent_network \
+    -p 9001:9001/tcp \
+    --mode global \
+    --constraint 'node.platform.os == linux' \
+    --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+    --mount type=bind,src=/var/lib/docker/volumes,dst=/var/lib/docker/volumes \
+    --mount type=bind,src=/,dst=/host \
+    portainer/agent:2.33.6
+
+- Hasil:
+  Portainer Agent berjalan pada seluruh node Swarm
+  (node01 dan node02).
+
+------------------------------------------------------------
+4. Konfigurasi Environment Node02 di Portainer
+------------------------------------------------------------
+- Akses menu:
+  Environments -> Add Environment -> Docker Swarm -> Agent
+
+- Pengisian data:
+  Name            : pod-sandy-node02
+  Environment URL : 10.7.7.20:9001
+
+- Klik:
+  Connect
+
+- Hasil:
+  Node02 berhasil terhubung ke Portainer Dashboard.
+
+------------------------------------------------------------
+5. Verifikasi Koneksi Node02
+------------------------------------------------------------
+- Akses menu:
+  Home (Portainer Dashboard)
+
+- Hasil yang diharapkan:
+  - Muncul environment baru dengan nama pod-sandy-node02
+  - Status environment: Connected
+  - Node02 dapat dimonitor melalui Portainer
+
+------------------------------------------------------------
+## Hasil Verifikasi
+- Portainer Dashboard dapat diakses melalui browser [✓]
+- Portainer Agent berjalan di seluruh node Swarm [✓]
+- Node02 berhasil terhubung ke Portainer Dashboard [✓]
+- Node02 muncul pada halaman Home Portainer [✓]
+
+## Kesimpulan
+Portainer berhasil diinstal dan dikonfigurasi pada Docker
+Swarm. Seluruh node, termasuk node worker (node02), dapat
+dimonitor dan dikelola secara terpusat melalui Portainer
+Dashboard menggunakan Portainer Agent.
+
+Environment: pod-sandy-node01 & pod-sandy-node02

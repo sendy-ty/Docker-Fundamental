@@ -1,0 +1,126 @@
+Lab 7.6 – Build & Push Image from Portainer
+
+## Deskripsi Task
+Melakukan pembuatan (build) Docker image menggunakan
+Dockerfile melalui Portainer Dashboard, kemudian
+melakukan push image ke Docker Hub dan memverifikasi
+bahwa image berhasil dipublikasikan serta dapat
+dijalankan untuk proses grading.
+
+## Langkah Implementasi
+
+1. Build Image dari Dockerfile melalui Portainer
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Menu:
+  Images -> + Build a new image
+
+- Konfigurasi Build:
+  Name         : sandy/nginx:lab76
+  Build Method : Web Editor
+  Deployment   : pod-sandy-node01
+
+- Isi Dockerfile:
+  FROM registry.adinusa.id/btacademy/nginx:latest
+  ARG USERNAME=sandy
+  RUN echo "nginx running on image $USERNAME/nginx:lab76" > /usr/share/nginx/html/index.html
+  EXPOSE 80
+
+- Aksi:
+  Klik Build the image
+
+- Hasil:
+  Proses build image berjalan dan menampilkan output
+  build tanpa error.
+
+------------------------------------------------------------
+2. Verifikasi Image Hasil Build
+------------------------------------------------------------
+- Menu:
+  Images
+
+- Hasil:
+  Image sandy/nginx:lab76 berhasil dibuat dan muncul
+  pada daftar Images.
+
+------------------------------------------------------------
+3. Menambahkan Docker Hub Registry
+------------------------------------------------------------
+- Menu:
+  Registries -> Add registry
+
+- Konfigurasi:
+  Registry Provider : DockerHub
+  Name              : repo-sandy
+  Username          : <username_docker_hub>
+  Password          : <password_docker_hub>
+
+- Aksi:
+  Klik Add Registry
+
+- Hasil:
+  Registry Docker Hub berhasil ditambahkan ke Portainer.
+
+------------------------------------------------------------
+4. Tag Image ke Docker Hub
+------------------------------------------------------------
+- Menu:
+  Images -> sandy/nginx:lab76
+
+- Konfigurasi Tag:
+  Registry : repo-sandy
+  Image    : <username_docker_hub>/nginx:lab76
+
+- Aksi:
+  Klik Tag
+
+- Hasil:
+  Image berhasil ditag sesuai format Docker Hub.
+
+------------------------------------------------------------
+5. Push Image ke Docker Hub
+------------------------------------------------------------
+- Aksi:
+  Klik Push to registry
+
+- Hasil:
+  Proses push image ke Docker Hub berjalan tanpa error.
+
+------------------------------------------------------------
+6. Verifikasi Image di Docker Hub dan CLI
+------------------------------------------------------------
+- Verifikasi melalui Docker Hub Dashboard:
+  Image <username_docker_hub>/nginx:lab76 tersedia.
+
+- Verifikasi melalui CLI:
+  $ docker pull <username_docker_hub>/nginx:lab76
+  $ docker history <username_docker_hub>/nginx:lab76
+
+- Hasil:
+  Terdapat instruksi ARG USERNAME=sandy pada history image.
+
+------------------------------------------------------------
+7. Menjalankan Image untuk Grading
+------------------------------------------------------------
+- Perintah:
+  $ docker run -d -p 8081:80 <username_docker_hub>/nginx:lab76
+
+- Hasil:
+  Container berjalan di background dan siap digunakan
+  untuk proses grading.
+
+------------------------------------------------------------
+## Hasil Verifikasi
+- Image sandy/nginx:lab76 berhasil dibuat [✓]
+- Image berhasil dipush ke Docker Hub [✓]
+- docker history menampilkan ARG USERNAME=sandy [✓]
+- Image dapat dijalankan dengan parameter -d [✓]
+
+## Kesimpulan
+Portainer Dashboard memungkinkan proses build dan push
+Docker image dilakukan secara visual tanpa CLI. Image
+hasil build berhasil dipublikasikan ke Docker Hub,
+diverifikasi melalui metadata image, serta dapat
+dijalankan untuk kebutuhan deployment dan grading.
+
+Environment: pod-sandy-node01 & pod-sandy-node02
