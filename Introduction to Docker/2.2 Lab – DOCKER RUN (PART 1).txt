@@ -1,0 +1,92 @@
+LAB 2.2 – DOCKER RUN (PART 1)
+
+Node:
+- pod-[sandyytirtaa]-node01
+- pod-[sandyytirtaa]-node02
+
+Tujuan:
+- Memahami perintah dasar docker run
+- Menjalankan container Redis dan NGINX
+- Menampilkan dan memverifikasi container
+- Memahami port mapping container
+
+--------------------------------------------------
+Practice 01 – Redis (Node01)
+--------------------------------------------------
+
+1. Search image Redis dari DockerHub
+docker search redis
+
+2. Menjalankan Redis (foreground)
+docker run redis
+Tekan CTRL + C untuk menghentikan container
+
+3. Menjalankan Redis (background)
+docker run -d redis
+
+4. Menjalankan Redis dengan nama container
+docker run -d --name redis1 redis
+
+5. Menampilkan container yang berjalan
+docker ps
+
+6. Menampilkan semua container
+docker ps -a
+
+7. Melihat detail container Redis
+docker inspect redis1
+
+8. Melihat log container Redis
+docker logs redis1
+
+9. Monitoring resource container Redis
+docker stats redis1
+Tekan CTRL + C untuk keluar
+
+10. Melihat proses di dalam container Redis
+docker top redis1
+
+11. Menghentikan container Redis
+docker stop redis1
+
+--------------------------------------------------
+Practice 02 – NGINX (Node02)
+--------------------------------------------------
+
+1. Search image NGINX dari DockerHub
+docker search nginx
+
+2. Menjalankan NGINX dengan port mapping manual
+docker run -d --name nginx1 -p 8080:80 nginx
+
+3. Menguji akses NGINX
+curl localhost:8080
+
+4. Melihat detail container NGINX
+docker inspect nginx1
+
+5. Menjalankan NGINX dengan port mapping otomatis
+docker run -d --name nginx2 -p 80 nginx
+
+6. Menguji akses NGINX (auto port)
+curl localhost:$(docker port nginx2 80 | cut -d : -f 2)
+
+--------------------------------------------------
+Verifikasi
+--------------------------------------------------
+
+1. Menampilkan semua container
+docker ps -a
+docker container ls -a
+
+2. Menampilkan image Docker
+docker images
+
+--------------------------------------------------
+Hasil
+--------------------------------------------------
+
+- Container Redis berhasil dijalankan dan diverifikasi
+- Container NGINX berhasil dijalankan dengan port mapping manual dan otomatis
+- Akses ke layanan NGINX berhasil menggunakan curl
+- Seluruh container dapat ditampilkan dan diperiksa menggunakan Docker CLI

@@ -1,0 +1,59 @@
+# Lab 2.4 : Docker Run - Part 3
+
+## Project Overview
+Implementasi manajemen container pada Ubuntu VM yang mencakup pengelolaan lifecycle (pause/unpause), linking antar container, dan konfigurasi resource limits.
+
+---
+
+## 1. Database & Admin Tools (Practice 05)
+Menjalankan stack MySQL dan phpMyAdmin dengan mekanisme linking.
+
+- **MySQL**: Berjalan dengan nama `my-mysql`, password root `RAHASIA`, dan database `latihan05`.
+- **phpMyAdmin**: Terhubung ke `my-mysql` melalui alias `db`, diakses via port `8090`.
+
+**Command Utama:**
+$ docker run -d --name my-mysql -e MYSQL_ROOT_PASSWORD=RAHASIA -e MYSQL_DATABASE=latihan05 -p 3306:3306 registry.adinusa.id/btacademy/mysql
+$ docker run --name my-phpmyadmin -d --link my-mysql:db -p 8090:80 registry.adinusa.id/btacademy/phpmyadmin
+
+---
+
+## 2. Container Lifecycle (Practice 06)
+Eksperimen pembekuan proses (pause) pada container Ubuntu.
+
+- **Status Paused**: Container `ubuntu2` dibekukan statusnya.
+- **Resource Check**: Penggunaan CPU turun ke 0% saat status paused, namun memori tetap teralokasi.
+
+**Command Utama:**
+$ docker run -dit --name ubuntu1 registry.adinusa.id/btacademy/ubuntu
+$ docker run -dit --name ubuntu2 registry.adinusa.id/btacademy/ubuntu
+$ docker pause ubuntu1 ubuntu2
+$ docker unpause ubuntu1
+
+---
+
+## 3. Resource Limits & Hardening (Practice 07)
+Deployment WordPress dan MariaDB dengan batasan resource dan keamanan (Capability Drop).
+
+- **MariaDB (`ch6_mariadb`)**: 
+  - RAM Limit: 256MB
+  - CPU Shares: 1024
+  - Security: `--cap-drop net_raw` (menghapus akses jaringan low-level).
+- **WordPress (`ch6_wordpress`)**:
+  - RAM Limit: 512MB
+  - CPU Shares: 512
+  - Port: 80 (Host) -> 80 (Container)
+
+**Command Utama:**
+$ docker container run -d --name ch6_mariadb --memory 256m --cpu-shares 1024 --cap-drop net_raw -e MYSQL_ROOT_PASSWORD=test registry.adinusa.id/btacademy/mariadb:5.5
+$ docker container run -d -p 80:80 -P --name ch6_wordpress --memory 512m --cpu-shares 512 --cap-drop net_raw --link ch6_mariadb:mysql -e WORDPRESS_DB_PASSWORD=test registry.adinusa.id/btacademy/wordpress:5.0.0-php7.2-apache
+
+---
+
+## 4. Final Verification Results
+- [✓] WordPress Dashboard accessible (English)
+- [✓] phpMyAdmin connected to MySQL
+- [✓] ubuntu2 status is "Paused"
+- [✓] Memory limits applied (256MB & 512MB)
+
+---
+*Lab completed on Node-01 using nusactl tools.*

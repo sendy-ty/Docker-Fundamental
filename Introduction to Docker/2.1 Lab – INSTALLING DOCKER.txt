@@ -1,0 +1,45 @@
+LAB 2.1 – INSTALLING DOCKER
+Execute in all nodes
+
+1. Update system & install dependencies
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+
+2. Add Docker official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+3. Add Docker repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+
+4. Install Docker Engine & plugins
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+5. Verify Docker installation
+docker version
+docker info
+
+6. Add user to docker group
+sudo usermod -aG docker $USER
+sudo chmod 666 /var/run/docker.sock
+
+Note:
+Logout and login again for group changes to take effect.
+
+7. Test Docker installation
+docker run registry.adinusa.id/btacademy/hello-world
+
+8. Display Docker images
+docker image ls
+
+9. Display all containers
+docker container ls -a
+
+Verification:
+- Docker commands can be run without sudo
+- Docker installed on all nodes

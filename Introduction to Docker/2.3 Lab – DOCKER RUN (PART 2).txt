@@ -1,0 +1,81 @@
+LAB 2.3 – DOCKER RUN (PART 2)
+
+Node:
+- pod-[sandyytirtaa]-node01
+
+Tujuan:
+- Menjalankan beberapa container NGINX
+- Melakukan port mapping ke host
+- Mengakses dan memodifikasi konten web di dalam container
+- Memverifikasi container dengan inspect, logs, dan monitoring
+
+--------------------------------------------------
+Step 1 – Search Image NGINX
+--------------------------------------------------
+docker search nginx
+skopeo list-tags docker://registry.adinusa.id/btacademy/nginx
+
+--------------------------------------------------
+Step 2 – Run NGINX Container (nginx1)
+--------------------------------------------------
+docker run -d --name nginx1 -p 8080:80 nginx
+curl localhost:8080
+
+--------------------------------------------------
+Step 3 – Run NGINX Container (nginx2)
+--------------------------------------------------
+docker run -d --name nginx2 -p 8081:80 nginx
+curl localhost:8081
+
+--------------------------------------------------
+Step 4 – Inspect & Logs Container
+--------------------------------------------------
+docker inspect nginx1
+docker inspect nginx2
+
+docker logs nginx1
+docker logs nginx2
+
+--------------------------------------------------
+Step 5 – Access Container & Install Editor
+--------------------------------------------------
+docker exec -it nginx2 /bin/bash
+apt-get update -y && apt-get install nano -y
+exit
+
+--------------------------------------------------
+Step 6 – Edit index.html in nginx2
+--------------------------------------------------
+docker exec -it nginx2 /bin/bash
+nano index.html
+Isi file:
+hello, username.
+mv index.html /usr/share/nginx/html/
+service nginx restart
+exit
+
+--------------------------------------------------
+Step 7 – Verification
+--------------------------------------------------
+curl localhost:8080     # default nginx
+curl localhost:8081     # hello, username.
+
+docker ps
+docker container ls
+
+--------------------------------------------------
+Step 8 – Monitoring Container
+--------------------------------------------------
+docker stats nginx1
+docker stats nginx2
+
+docker top nginx1
+docker top nginx2
+
+--------------------------------------------------
+Hasil
+--------------------------------------------------
+- Container nginx1 dan nginx2 berjalan normal
+- Port 8080 dan 8081 dapat diakses dari host
+- Konten web nginx2 berhasil dimodifikasi
+- Status dan resource container berhasil dimonitor
