@@ -1,0 +1,38 @@
+Lab 4.2 - Exploring Dockerfile (Flask Apps)
+
+## 1. Persiapan Environment & Source Code
+Menyiapkan direktori kerja dan file aplikasi Flask.
+$ mkdir -p ~/latihan03 && cd ~/latihan03
+
+# File: app.py (Flask Entry Point)
+# File: requirements.txt (Python Dependencies)
+
+## 2. Build Docker Image
+Membangun image lokal dengan nama 'flask-latihan03'.
+$ docker build -t flask-latihan03 .
+
+## 3. Tagging & Push ke Docker Hub
+Memberikan identitas Docker Hub pada image dan mengunggahnya ke registry publik.
+$ docker tag flask-latihan03 [usernamedocker]/flask-latihan03:latest
+$ docker push [usernamedocker]/flask-latihan03:latest
+
+## 4. Deployment & Verifikasi
+Menjalankan container dari image Docker Hub dengan pemetaan port 5000.
+$ docker run -d -p 5000:5000 --name flask03 [usernamedocker]/flask-latihan03:latest
+
+# Verifikasi akses aplikasi
+$ curl localhost:5000
+
+## Analisis Teknis
+- Base Image: Ubuntu 16.04 dengan instalasi manual python-pip.
+- WORKDIR: Mengatur direktori aktif di dalam container ke /app.
+- ENTRYPOINT: Mengunci eksekusi utama pada perintah "python".
+- Docker Hub: Memungkinkan distribusi image secara global untuk kebutuhan deployment.
+
+## Hasil Akhir
+- Docker Image: [usernamedocker]/flask-latihan03 (Tagged & Pushed)
+- Container Status: Running on Port 5000
+- Output: "Hey, we have Flask in a Docker container!"
+
+
+Environment: pod-sandyytirtaa-node01

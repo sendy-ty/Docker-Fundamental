@@ -1,0 +1,22 @@
+Lab 4.3 - Dockerfile Quiz (Static Website)
+
+## Deskripsi Task
+Membangun image kustom berbasis Nginx untuk melakukan hosting website statis yang dikloning dari repositori eksternal.
+
+## Langkah Implementasi
+1. Workspace: Membuat direktori 'latihan-quiz01'.
+2. Source: Cloning repository 'mywebsite.git' ke direktori kerja.
+3. Build Configuration (Dockerfile):
+   - Base Image: registry.adinusa.id/btacademy/nginx:latest
+   - Action: Menyalin (COPY) seluruh konten repositori ke /usr/share/nginx/html.
+4. Build Image:
+   $ docker build -t latihan-quiz01-image .
+5. Deployment:
+   $ docker run -d --name quiz01 -p 80:80 latihan-quiz01-image
+
+## Hasil Verifikasi
+- Container Name: quiz01 [✓]
+- Image Name: latihan-quiz01-image [✓]
+- Content: Berhasil menampilkan konten 'mywebsite' (Bukan default Nginx) [✓]
+
+Environment: pod-sandyytirtaa-node01

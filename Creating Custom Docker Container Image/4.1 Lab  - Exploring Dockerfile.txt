@@ -1,0 +1,43 @@
+Lab 4.1 - Exploring Dockerfile
+
+## Deskripsi Task
+Praktik pembuatan Docker Image menggunakan Dockerfile melalui dua skenario: membangun image dari repositori eksternal dan membuat image kustom dari awal dengan penambahan paket perangkat lunak.
+
+## 1. Practice 01: Node.js Application
+Membangun image dari source code aplikasi Node.js yang dikloning dari GitHub.
+
+- **Repositori**: https://github.com/spkane/docker-node-hello.git
+- **Nama Image**: node-latihan01
+- **Port**: 8080 (Host) -> 8080 (Container)
+
+**Langkah Perintah:**
+$ git clone https://github.com/spkane/docker-node-hello.git latihan01
+$ cd latihan01
+$ docker build -t node-latihan01 .
+$ docker run -d --rm --name node-latihan01 -p 8080:8080 node-latihan01
+$ curl localhost:8080
+
+## 2. Practice 02: Custom Whale-Fortune
+Membuat Dockerfile kustom menggunakan base image 'whalesay' dan menambahkan paket 'fortunes' untuk menampilkan kutipan acak secara visual.
+
+- **Base Image**: registry.adinusa.id/btacademy/whalesay:latest
+- **Nama Image**: docker-whale
+- **Fitur**: Instalasi paket 'fortunes' via RUN command.
+
+**Konfigurasi Dockerfile:**
+FROM registry.adinusa.id/btacademy/whalesay:latest
+RUN apt -y update && apt install -y fortunes
+CMD /usr/games/fortune -a | cowsay
+
+**Langkah Perintah:**
+$ mkdir -p ~/latihan02 && cd ~/latihan02
+$ sudo vim Dockerfile (Input konfigurasi di atas)
+$ docker build -t docker-whale .
+$ docker run --rm docker-whale
+
+
+## Hasil Verifikasi (nusactl grade do-004-1)
+- Case 1 - check image node-latihan01: [✓] PASSED
+- Case 2 - check image docker-whale: [✓] PASSED
+
+Environment: pod-sandyytirtaa-node01
