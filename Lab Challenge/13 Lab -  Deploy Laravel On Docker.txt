@@ -1,0 +1,115 @@
+============================================================
+Challenge Lab 2 – Deploy Laravel with Docker (Hard)
+============================================================
+
+Deskripsi Task
+--------------
+Lab ini bertujuan untuk melakukan deployment aplikasi Laravel menggunakan Docker
+dengan image PHP 7.2 dan Apache. Seluruh proses instalasi dependency, konfigurasi
+environment, migrasi database, dan seeding data dilakukan secara otomatis tanpa
+langkah manual, menggunakan mekanisme entrypoint container.
+
+Lab dijalankan pada node pod-[username]-node02.
+
+
+Langkah Implementasi
+--------------------
+
+1. Persiapan Direktori
+   Node   : pod-[username]-node02
+   Perintah:
+     cd $HOME
+     mkdir challenge2
+     cd challenge2
+
+2. Clone Repository Laravel
+   Node   : pod-[username]-node02
+   Perintah:
+     git clone https://github.com/academynusa/perpus-laravel.git
+
+3. Konfigurasi File entrypoint.sh
+   Node   : pod-[username]-node02
+   Lokasi : perpus-laravel/entrypoint.sh
+   Isi:
+     - Menjalankan composer install jika folder vendor belum ada
+     - Menyalin file .env dari .env.example
+     - Generate APP_KEY
+     - Menjalankan migrate dan db:seed
+     - Menjalankan Apache di foreground
+
+4. Konfigurasi Dockerfile
+   Node   : pod-[username]-node02
+   Lokasi : challenge2/Dockerfile
+   Konfigurasi utama:
+     - Menggunakan base image php:7.2-apache
+     - Mengganti repository Debian ke archive.debian.org
+     - Menginstall dependency sistem dan PHP extension (pdo_mysql, gd, zip, dll)
+     - Mengatur Apache DocumentRoot ke /var/www/html/public
+     - Meng-copy source Laravel
+     - Mengatur entrypoint ke entrypoint.sh
+
+5. Build Docker Image
+   Node   : pod-[username]-node02
+   Perintah:
+     docker build --no-cache -t img-perpus-[username] .
+
+6. Menjalankan Container Laravel
+   Node   : pod-[username]-node02
+   Perintah:
+     docker run -d \
+     --name perpus-[username] \
+     -p 8000:80 \
+     img-perpus-[username]
+
+7. Verifikasi Akses Aplikasi
+   Node   : pod-[username]-node02
+   Perintah:
+     curl http://localhost:8000
+
+   Browser:
+     http://IP_NODE02:8000
+
+
+Hasil Verifikasi
+----------------
+[✓] Docker image berhasil dibuat (img-perpus-[username])
+[✓] Container perpus-[username] berjalan dengan status Up
+[✓] Apache dan PHP 7.2 berjalan dengan normal
+[✓] Dependency Laravel (vendor) terinstall otomatis
+[✓] APP_KEY berhasil digenerate
+[✓] Database migrate dan seeding berjalan otomatis
+[✓] Aplikasi Laravel dapat diakses melalui browser
+[✓] Login admin dan user berhasil
+
+
+Akun Login Aplikasi
+-------------------
+Admin:
+  Username : admin123
+  Password : admin123
+
+User:
+  Username : user123
+  Password : user123
+
+
+Kesimpulan
+----------
+Challenge Lab 2 berhasil diselesaikan dengan melakukan deployment aplikasi Laravel
+menggunakan Docker secara otomatis tanpa langkah manual. Seluruh proses instalasi
+dependency, konfigurasi environment, migrasi database, dan seeding data dijalankan
+melalui mekanisme entrypoint container. Aplikasi berjalan stabil, dapat diakses
+melalui browser, dan memenuhi seluruh kriteria penilaian lab.
+
+
+Environment
+-----------
+OS              : Ubuntu Server (Adinusa Lab)
+Node            : pod-[username]-node02
+Docker Version  : Docker Engine
+PHP Version     : 7.2
+Web Server      : Apache 2.4
+Framework       : Laravel
+Database        : MySQL
+Port            : 8000
+============================================================

@@ -1,0 +1,152 @@
+LAB CHALLENGE 1
+HAProxy with Docker
+
+==================================================
+
+Deskripsi Task
+--------------
+Mengonfigurasi HAProxy menggunakan Docker sebagai reverse proxy berbasis
+domain untuk dua web server backend (Nginx dan Apache). Routing dilakukan
+berdasarkan Host Header tanpa mekanisme load balancing.
+
+==================================================
+
+Langkah Konfigurasi
+-------------------
+
+1. Membuat Direktori Kerja
+   Node    : node01
+   Perintah:
+     mkdir ~/challenge1
+     cd ~/challenge1
+   Hasil  :
+     Direktori challenge1 siap digunakan.
+
+--------------------------------------------------
+
+2. Membuat File Konfigurasi HAProxy
+   Node    : node01
+   File    : haproxy.cfg
+   Perintah:
+     vim haproxy.cfg
+
+   Isi Konfigurasi:
+     global
+         daemon
+         maxconn 256
+
+     defaults
+         mode http
+         timeout connect 5s
+         timeout client  50s
+         timeout server  50s
+
+     frontend http_front
+         bind *:80
+         acl host_web1 hdr(host) -i web1.sandy.id
+         acl host_web2 hdr(host) -i web2.sandy.id
+         use_backend web1_backend if host_web1
+         use_backend web2_backend if host_web2
+
+     backend web1_backend
+         server web1 web1:80
+
+     backend web2_backend
+         server web2 web2:80
+
+   Hasil  :
+     Konfigurasi HAProxy berbasis domain berhasil dibuat.
+
+--------------------------------------------------
+
+3. Membuat Docker Network
+   Node    : node01
+   Perintah:
+     docker network create challenge-net
+   Hasil  :
+     Network bridge challenge-net tersedia.
+
+--------------------------------------------------
+
+4. Menjalankan Container Backend
+   Node    : node01
+
+   a. Web1 (Nginx)
+      Perintah:
+        docker run -d \
+        --name web1 \
+        --network challenge-net \
+        registry.adinusa.id/btacademy/nginx:latest
+
+   b. Web2 (Apache)
+      Perintah:
+        docker run -d \
+        --name web2 \
+        --network challenge-net \
+        registry.adinusa.id/btacademy/httpd:latest
+
+   Hasil  :
+     Container web1 dan web2 berjalan pada port 80 (internal).
+
+--------------------------------------------------
+
+5. Menjalankan Container HAProxy
+   Node    : node01
+   Perintah:
+     docker run -d \
+     --name sandy-haproxy \
+     --network challenge-net \
+     -p 80:80 \
+     -v $(pwd)/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg \
+     registry.adinusa.id/btacademy/haproxy-alpine:2.4 \
+     haproxy -db -f /usr/local/etc/haproxy/haproxy.cfg
+
+   Hasil  :
+     HAProxy berjalan dan listen pada port 80 host.
+
+--------------------------------------------------
+
+6. Konfigurasi DNS Lokal
+   Node    : node01
+   File    : /etc/hosts
+   Perintah:
+     sudo vim /etc/hosts
+
+   Tambahan:
+     127.0.0.1 web1.sandy.id
+     127.0.0.1 web2.sandy.id
+
+   Hasil  :
+     Domain web1 dan web2 terarah ke HAProxy.
+
+--------------------------------------------------
+
+7. Pengujian Akses
+   Node    : node01
+   Perintah:
+     curl web1.sandy.id
+     curl web2.sandy.id
+
+   Hasil  :
+     - web1.sandy.id menampilkan halaman Nginx
+     - web2.sandy.id menampilkan halaman Apache
+
+==================================================
+
+Hasil Verifikasi
+----------------
+[✓] Container HAProxy berjalan
+[✓] Konfigurasi HAProxy valid
+[✓] Web1 dan Web2 berjalan normal
+[✓] Routing berbasis domain berhasil
+[✓] Seluruh container berada pada network yang sama
+
+==================================================
+
+Kesimpulan
+----------
+HAProxy berhasil dikonfigurasi sebagai reverse proxy berbasis domain
+menggunakan Docker. Sistem mampu meneruskan request ke backend yang sesuai
+berdasarkan Host Header dan memenuhi seluruh kriteria Challenge Lab.
+
+==================================================
