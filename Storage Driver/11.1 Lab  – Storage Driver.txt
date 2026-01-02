@@ -1,0 +1,88 @@
+Lab 11.1 – Configuring Storage Driver
+
+## Deskripsi Task
+Melakukan konfigurasi storage driver Docker dengan
+mengubah storage driver default menjadi vfs melalui
+file daemon.json, kemudian memverifikasi bahwa Docker
+menggunakan storage driver tersebut serta memastikan
+data image tersimpan pada direktori yang sesuai.
+
+## Langkah Implementasi
+
+1. Mengubah Konfigurasi Storage Driver Docker
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ sudo vim /etc/docker/daemon.json
+
+- Isi konfigurasi:
+  {
+    "storage-driver": "vfs"
+  }
+
+- Hasil:
+  File daemon.json berhasil dikonfigurasi untuk
+  menggunakan storage driver vfs.
+
+------------------------------------------------------------
+2. Restart Service Docker
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ sudo service docker restart
+
+- Hasil:
+  Service Docker berhasil direstart dan konfigurasi
+  storage driver diterapkan.
+
+------------------------------------------------------------
+3. Verifikasi Storage Driver Aktif
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker info
+
+- Hasil:
+  Informasi Docker menampilkan Storage Driver: vfs.
+
+------------------------------------------------------------
+4. Pull Image untuk Pengujian Storage
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker pull registry.adinusa.id/btacademy/ubuntu
+
+- Hasil:
+  Image ubuntu berhasil diunduh menggunakan storage
+  driver vfs.
+
+------------------------------------------------------------
+5. Verifikasi Direktori Storage Docker
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ sudo ls -al /var/lib/docker/vfs/dir/
+  $ sudo du -sh /var/lib/docker/vfs/dir/
+
+- Hasil:
+  Direktori vfs terisi oleh folder-layer image Docker
+  dengan total penggunaan storage sekitar 1.1 GB,
+  menandakan storage driver vfs bekerja dengan benar.
+
+------------------------------------------------------------
+## Hasil Verifikasi
+- Storage driver Docker berhasil diubah menjadi vfs [✓]
+- Docker daemon berhasil direstart [✓]
+- Image ubuntu berhasil di-pull [✓]
+- Data image tersimpan pada /var/lib/docker/vfs/dir/ [✓]
+- Grading do-011-1 berhasil (Score 100) [✓]
+
+## Kesimpulan
+Konfigurasi storage driver Docker menggunakan vfs
+berhasil diterapkan. Storage driver vfs menyimpan
+setiap layer image secara penuh tanpa mekanisme
+copy-on-write, sehingga cocok digunakan untuk
+keperluan testing dan troubleshooting meskipun
+kurang efisien untuk lingkungan produksi.
+
+Environment: pod-sandy-node01
