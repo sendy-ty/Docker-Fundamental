@@ -1,0 +1,29 @@
+# DOCUMENTATION: Lab 3.2 - Mount Volume with NFS Server
+
+## 1. Konfigurasi NFS Server (Node 01)
+Menyiapkan direktori dan menjalankan container NFS Server.
+$ sudo mkdir -p /data/nfs-storage01/
+$ docker run -itd --privileged --restart unless-stopped \
+  -e SHARED_DIRECTORY=/data \
+  -v /data/nfs-storage01:/data \
+  -p 2049:2049 \
+  registry.adinusa.id/btacademy/nfs-server-alpine:12
+
+## 2. Konfigurasi NFS Client (Node 02)
+Instalasi paket nfs-client, mounting ke Node 01, dan pembuatan file uji.
+$ ssh 10.7.7.20
+$ sudo apt install nfs-common -y
+$ sudo mount -v -t nfs4 10.7.7.10:/ /mnt
+$ df -h
+$ sudo touch /mnt/file1.txt
+$ sudo touch /mnt/file2.txt
+$ exit
+
+## 3. Verifikasi Akhir (Node 01)
+Memastikan file yang dibuat di Node 02 tersinkronisasi ke direktori fisik Node 01.
+$ ls /data/nfs-storage01/
+
+## Hasil Verifikasi
+- Container NFS Server: Running [✓]
+- Network Mounting: Success [✓]
+- File Synchronization: file1.txt & file2.txt present [✓]

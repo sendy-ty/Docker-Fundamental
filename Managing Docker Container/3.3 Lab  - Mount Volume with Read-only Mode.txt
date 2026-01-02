@@ -1,0 +1,38 @@
+# DOCUMENTATION: Lab 3.3 - Docker Volume Read-only Mode
+
+## 1. Persiapan Docker Volume
+Membuat volume lokal untuk penyimpanan data persisten.
+$ docker volume create my-vol
+$ docker volume ls
+$ docker volume inspect my-vol
+
+## 2. Deploy Container dengan Akses Read-Write (RW)
+Menjalankan container Nginx yang memiliki izin untuk membaca dan menulis ke volume.
+$ docker run -d --name=nginx-rwvol -v my-vol:/usr/share/nginx/html -p 4005:80 registry.adinusa.id/btacademy/nginx:latest
+
+## 3. Identifikasi IP & Pengujian Awal
+$ IP_RW=$(docker inspect nginx-rwvol | jq -r '.[0].NetworkSettings.Networks.bridge.IPAddress')
+$ curl http://$IP_RW
+
+## 4. Modifikasi Konten Volume via Host
+Mengubah file langsung pada direktori fisik volume di Host Ubuntu untuk menguji sinkronisasi.
+$ sudo sh -c 'echo "This is from my-vol source directory" > index.html'
+$ sudo mv index.html /var/lib/docker/volumes/my-vol/_data
+$ curl http://$IP_RW
+
+## 5. Deploy Container dengan Akses Read-Only (RO)
+Menjalankan container Nginx kedua dengan batasan akses hanya-baca (:ro).
+$ docker run -d --name=nginx-rovol -v my-vol:/usr/share/nginx/html:ro registry.adinusa.id/btacademy/nginx:latest
+
+## 6. Verifikasi Mode Mount
+Memastikan atribut "Mode" pada container 'nginx-rovol' adalah "ro".
+$ docker inspect nginx-rovol | jq '.[].Mounts'
+
+---
+## Hasil Verifikasi
+- Docker Volume 'my-vol' berhasil dibuat. [✓]
+- Sinkronisasi data dari Host ke Container RW berhasil (Output curl berubah). [✓]
+- Container 'nginx-rovol' terverifikasi berjalan dalam mode Read-Only. [✓]
+- Skor Akhir: 100
+---
+Environment: pod-sandyytirtaa-node01

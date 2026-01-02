@@ -1,0 +1,27 @@
+# DOCUMENTATION: Lab 3.1 - Docker Mount Volume
+
+## 1. Persiapan Direktori Kerja
+Menyiapkan folder untuk menyimpan data sampel di host (VM Ubuntu).
+$ cd $HOME
+$ mkdir -p latihan/latihan01-volume
+$ cd latihan/latihan01-volume
+
+## 2. Inisialisasi Data Sampel
+Membuat 10 file kosong sebagai objek uji persistensi data.
+$ for i in {1..10}; do touch file-$i; done
+
+## 3. Pembuatan Data Volume Container
+Membuat container khusus (my-volume) sebagai penyedia storage terpusat.
+$ sudo docker create -v /my-volume --name my-volume registry.adinusa.id/btacademy/busybox
+
+## 4. Injeksi Data ke Volume
+Menyalin data dari direktori lokal VM ke dalam volume container.
+$ sudo docker cp . my-volume:/my-volume 
+
+## 5. Mounting & Verifikasi Data
+Menjalankan container lain (Ubuntu) untuk mengakses volume dari 'my-volume'.
+$ docker run --volumes-from my-volume registry.adinusa.id/btacademy/ubuntu ls /my-volume
+
+## Hasil Verifikasi (nusactl grade do-003-1)
+- Case 1: Docker volume created successfully [✓]
+- Case 2: Volume mounted on target container [✓]

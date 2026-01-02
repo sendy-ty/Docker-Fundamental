@@ -1,0 +1,24 @@
+Lab 3.6: Host Network
+
+## 1. Deploy Container dengan Host Network
+Menjalankan container Nginx yang menggunakan stack network langsung dari Host Ubuntu.
+$ docker run -itd --network host --name my_nginx registry.adinusa.id/btacademy/nginx
+
+## 2. Pengujian Akses Localhost
+Karena menggunakan host network, port container langsung terbuka di interface Host tanpa port forwarding (-p).
+$ curl http://localhost
+
+## 3. Verifikasi Network & Port
+Memastikan IP interface host digunakan oleh container dan port 80 telah terikat (bound) di level OS Host.
+$ ip add
+$ sudo netstat -tulpn | grep :80
+
+
+## Analisis Teknis
+- Mode Host: Menghapus isolasi network antara container dan Docker host.
+- Performa: Memberikan throughput network yang lebih tinggi karena tidak ada proses NAT (Network Address Translation).
+- Port Conflict: Hanya satu container yang bisa menggunakan port 80 pada satu waktu di interface host yang sama.
+
+Hasil: Nginx dapat diakses langsung via port 80 Host. [✓]
+Skor Akhir: 100
+Environment: pod-sandyytirtaa-node01

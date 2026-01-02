@@ -1,0 +1,40 @@
+Lab 3.5: Default Bridge Network
+
+## 1. Eksplorasi Network Awal
+Melihat daftar network yang tersedia secara default di Docker.
+$ sudo docker network ls
+
+## 2. Deploy Container Alpine
+Menjalankan dua container Alpine dalam mode detached-interactive.
+$ docker run -dit --name alpine1 registry.adinusa.id/btacademy/alpine ash
+$ docker run -dit --name alpine2 registry.adinusa.id/btacademy/alpine ash
+
+## 3. Custom Bridge Network
+Membuat network bridge baru (bridge1) dan menghubungkannya ke container alpine1.
+$ docker network create --driver bridge bridge1
+$ docker network connect bridge1 alpine1
+
+## 4. Pengujian Konektivitas (Default Bridge)
+Melakukan inspeksi IP dan pengujian ping dari dalam container alpine1.
+$ IP_ALPINE2=$(docker inspect alpine2 | jq -r '.[].NetworkSettings.Networks.bridge.IPAddress')
+$ docker exec -it alpine1 sh
+# ping -c 3 8.8.8.8          # Test Internet (Success)
+# ping -c 3 $IP_ALPINE2      # Test IP (Success)
+# ping -c 3 alpine2          # Test Name Resolution (Failed)
+# exit
+
+## 5. Pengujian User-Defined Bridge (bridge1)
+Menghubungkan alpine2 ke network yang sama agar fitur Docker DNS aktif.
+$ docker network connect bridge1 alpine2
+$ docker exec -it alpine1 sh
+# ping -c 3 alpine2          # Test Name Resolution (Success)
+# exit
+
+
+## Hasil Verifikasi
+- Network 'bridge1' berhasil dibuat. [✓]
+- Koneksi IP antar container pada bridge default berhasil. [✓]
+- Resolusi nama (DNS) berhasil setelah keduanya terhubung ke user-defined bridge. [✓]
+- Skor Akhir: 100
+
+Environment: pod-sandyytirtaa-node01

@@ -1,0 +1,35 @@
+# DOCUMENTATION: Lab 3.4 - Docker Volume Driver (SSHFS)
+
+## 1. Persiapan Server NFS/Remote (Node 02)
+Menyiapkan direktori publik dan file index untuk dibagikan via SSH.
+$ sudo mkdir /share
+$ sudo chmod 777 /share
+$ echo "Hello Adinusa!" > /share/index.html
+
+## 2. Instalasi & Konfigurasi Plugin SSHFS (Node 01)
+Menginstal driver agar Docker dapat melakukan mounting volume melalui protokol SSH.
+$ docker plugin install --grant-all-permissions vieux/sshfs
+$ docker plugin disable [PLUGIN_ID]
+$ docker plugin set vieux/sshfs sshkey.source=/home/student/.ssh/
+$ docker plugin enable [PLUGIN_ID]
+$ docker plugin ls
+
+## 3. Pembuatan Docker Volume via SSHFS
+Membuat volume yang terhubung langsung ke direktori /share di Node 02 (10.7.7.20).
+$ docker volume create --driver vieux/sshfs \
+  -o sshcmd=student@10.7.7.20:/share \
+  -o allow_other sshvolume
+
+## 4. Deploy Container & Verifikasi
+Menjalankan Nginx menggunakan volume SSHFS dan melakukan pengujian konten.
+$ docker run -d --name=nginxtest-sshfs -p 8090:80 -v sshvolume:/usr/share/nginx/html registry.adinusa.id/btacademy/nginx:latest
+$ curl http://localhost:8090
+
+
+## Hasil Verifikasi
+- Plugin vieux/sshfs: Installed & Enabled [✓]
+- Docker Volume 'sshvolume': Created with sshfs driver [✓]
+- Konten "Hello Adinusa!": Terbaca dari Node 02 [✓]
+- Skor Akhir: 100
+
+Environment: pod-sandyytirtaa-node01 & node02
