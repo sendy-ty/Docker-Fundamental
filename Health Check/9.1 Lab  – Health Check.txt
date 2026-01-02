@@ -1,0 +1,217 @@
+Lab 9.1 – Health Check
+
+## Deskripsi Task
+Melakukan implementasi dan pengujian fitur Docker
+Health Check untuk memantau kondisi container, baik
+dalam status healthy maupun unhealthy, menggunakan
+dua metode: HTTP server berbasis image bawaan dan
+aplikasi Node.js dengan kontrol manual.
+
+## Langkah Implementasi
+
+============================================================
+A. Health Check Practice 01
+============================================================
+
+1. Membuat Working Directory
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ cd $HOME
+  $ mkdir hc-latihan01
+  $ cd hc-latihan01
+
+- Hasil:
+  Direktori kerja berhasil dibuat.
+
+------------------------------------------------------------
+2. Membuat Dockerfile
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ vim Dockerfile
+
+- Isi Dockerfile:
+  FROM registry.adinusa.id/btacademy/docker-http-server:health
+  HEALTHCHECK --interval=1s --retries=3 \
+    CMD curl --fail http://localhost:80/ || exit 1
+
+- Hasil:
+  Dockerfile berhasil dibuat dengan konfigurasi health check.
+
+------------------------------------------------------------
+3. Build Image dari Dockerfile
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker build -t http-healthcheck .
+
+- Hasil:
+  Image http-healthcheck berhasil dibuat.
+
+------------------------------------------------------------
+4. Menjalankan Container
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker run -d -p 80:80 --name http-healthcheck http-healthcheck
+
+- Hasil:
+  Container http-healthcheck berhasil dijalankan.
+
+------------------------------------------------------------
+5. Pengujian Kondisi Healthy
+------------------------------------------------------------
+- Perintah:
+  $ docker ps
+  $ curl http://localhost/
+
+- Hasil:
+  Container berstatus healthy dan service dapat diakses.
+
+------------------------------------------------------------
+6. Simulasi Kondisi Unhealthy
+------------------------------------------------------------
+- Perintah:
+  $ curl http://localhost/unhealthy
+  $ docker container ls
+
+- Hasil:
+  Container http-healthcheck berubah ke status unhealthy.
+
+============================================================
+B. Health Check Practice 02
+============================================================
+
+1. Membuat Working Directory
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ cd $HOME
+  $ mkdir hc-latihan02
+  $ cd hc-latihan02
+
+- Hasil:
+  Direktori kerja berhasil dibuat.
+
+------------------------------------------------------------
+2. Membuat File server.js
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ vim server.js
+
+- Isi server.js:
+  "use strict";
+  const http = require('http');
+
+  function createServer () {
+    return http.createServer(function (req, res) {
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.end('OK\n');
+    }).listen(8080);
+  }
+
+  let server = createServer();
+
+  http.createServer(function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    if (server) {
+      server.close();
+      server = null;
+      res.end('Shutting down...\n');
+    } else {
+      server = createServer();
+      res.end('Starting up...\n');
+    }
+  }).listen(8081);
+
+- Hasil:
+  File server.js berhasil dibuat.
+
+------------------------------------------------------------
+3. Membuat Dockerfile Node Server
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ vim Dockerfile
+
+- Isi Dockerfile:
+  FROM registry.adinusa.id/btacademy/node
+  COPY server.js /
+  EXPOSE 8080 8081
+  HEALTHCHECK --interval=5s --timeout=10s --retries=3 \
+    CMD curl -sS 127.0.0.1:8080 || exit 1
+  CMD ["node","server.js"]
+
+- Hasil:
+  Dockerfile berhasil dibuat dengan health check.
+
+------------------------------------------------------------
+4. Build Image Node Server
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker build -t node-server .
+
+- Hasil:
+  Image node-server berhasil dibuat.
+
+------------------------------------------------------------
+5. Menjalankan Container Node Server
+------------------------------------------------------------
+- Node: pod-sandy-node01
+- Perintah:
+  $ docker run -d --name nodeserver -p 8080:8080 -p 8081:8081 node-server
+
+- Hasil:
+  Container nodeserver berhasil dijalankan.
+
+------------------------------------------------------------
+6. Pengujian Kondisi Healthy
+------------------------------------------------------------
+- Perintah:
+  $ curl 127.0.0.1:8080
+  $ docker ps
+  $ docker inspect --format "{{ json .State.Health }}" nodeserver | jq .
+
+- Hasil:
+  Container nodeserver berstatus healthy.
+
+------------------------------------------------------------
+7. Simulasi Perubahan Status
+------------------------------------------------------------
+- Perintah:
+  $ curl 127.0.0.1:8081
+  $ docker inspect --format "{{ json .State.Health }}" nodeserver | jq .
+
+- Hasil:
+  Service dihentikan sementara dan status health berubah.
+
+------------------------------------------------------------
+8. Pengujian Akhir
+------------------------------------------------------------
+- Perintah:
+  $ curl 127.0.0.1:8081
+  $ docker ps
+  $ docker inspect --format "{{ json .State.Health }}" nodeserver | jq .
+
+- Hasil:
+  Container nodeserver kembali ke status healthy.
+
+------------------------------------------------------------
+## Hasil Verifikasi
+- Container http-healthcheck berstatus unhealthy [✓]
+- Container nodeserver berstatus healthy [✓]
+- Docker Health Check berjalan sesuai konfigurasi [✓]
+- Grading do-009-1 berhasil (Score 100) [✓]
+
+## Kesimpulan
+Fitur Docker Health Check berhasil diimplementasikan
+untuk memantau kondisi container secara otomatis.
+Docker mampu mendeteksi perubahan kondisi aplikasi
+dan menandainya sebagai healthy atau unhealthy,
+sehingga sangat berguna untuk monitoring dan
+orchestrasi container.
+
+Environment: pod-sandy-node01
